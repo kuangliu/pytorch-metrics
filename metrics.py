@@ -56,20 +56,56 @@ class Metrics:
             acc = tp.sum() / (tp + fn).sum()
         return acc
 
+    def precision(self, reduction='mean'):
+        if not self.y or not self.t:
+            return
+        assert(reduction in ['none', 'mean'])
+        y = torch.cat(self.y, 0)
+        t = torch.cat(self.t, 0)
+        tp, fp, fn, tn = self._process(y, t)
+        prec = tp / (tp + fp)
+        if reduction == 'mean':
+            prec = prec.mean()
+        return prec
+
+    def recall(self, reduction='mean'):
+        if not self.y or not self.t:
+            return
+        assert(reduction in ['none', 'mean'])
+        y = torch.cat(self.y, 0)
+        t = torch.cat(self.t, 0)
+        tp, fp, fn, tn = self._process(y, t)
+        recall = tp / (tp + fn)
+        if reduction == 'mean':
+            recall = recall.mean()
+        return recall
+
 
 def test():
     import pytorch_lightning.metrics.functional as M
-    m = Metrics(3)
-    y = torch.tensor([0, 1, 2, 0, 1, 2, 0, 1])
-    t = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
+    nc = 5
+    m = Metrics(num_classes=nc)
+    y = torch.randint(0, nc, (10,))
+    t = torch.randint(0, nc, (10,))
     m.update(y, t)
 
+    print('\naccuracy:')
     print(m.accuracy('none'))
-    print(M.accuracy(y, t, 3, 'none'))
-
-    print()
+    print(M.accuracy(y, t, nc, 'none'))
     print(m.accuracy('mean'))
-    print(M.accuracy(y, t, 3, 'elementwise_mean'))
+    print(M.accuracy(y, t, nc, 'elementwise_mean'))
+
+    print('\nprecision:')
+    print(m.precision('none'))
+    print(M.precision(y, t, nc, 'none'))
+    print(m.precision('mean'))
+    print(M.precision(y, t, nc, 'elementwise_mean'))
+
+    print('\nrecall:')
+    print(m.recall('none'))
+    print(M.recall(y, t, nc, 'none'))
+    print(m.recall('mean'))
+    print(M.recall(y, t, nc, 'elementwise_mean'))
 
 
 if __name__ == '__main__':

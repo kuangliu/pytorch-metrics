@@ -1,2 +1,2 @@
 # PyTorch-Metrics
-Accuracy/Precision/Recall/ConfusionMatrix computation with batch updates.
+Accuracy, precision, recall, confusion matrix computation with batch updates.
