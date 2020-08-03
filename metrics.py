@@ -77,6 +77,7 @@ class Metrics:
         t = torch.cat(self.t, 0)
         tp, fp, fn, tn = self._process(y, t)
         prec = tp / (tp + fp)
+        prec[torch.isnan(prec)] = 0
         if reduction == 'mean':
             prec = prec.mean()
         return prec
@@ -97,6 +98,7 @@ class Metrics:
         t = torch.cat(self.t, 0)
         tp, fp, fn, tn = self._process(y, t)
         recall = tp / (tp + fn)
+        recall[torch.isnan(recall)] = 0
         if reduction == 'mean':
             recall = recall.mean()
         return recall
@@ -104,7 +106,7 @@ class Metrics:
 
 def test():
     import pytorch_lightning.metrics.functional as M
-    nc = 5
+    nc = 10
     m = Metrics(num_classes=nc)
     y = torch.randint(0, nc, (10,))
     t = torch.randint(0, nc, (10,))
