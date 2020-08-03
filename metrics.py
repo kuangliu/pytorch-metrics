@@ -2,7 +2,7 @@ import torch
 
 
 class Metrics:
-    ''' Metrics computes accuracy/precision/recall/confusion_matrix with batch updates. '''
+    '''Metrics computes accuracy/precision/recall/confusion_matrix with batch updates.'''
 
     def __init__(self, num_classes):
         self.num_classes = num_classes
@@ -10,20 +10,17 @@ class Metrics:
         self.t = []
 
     def update(self, y, t):
-        ''' Accuracy with batch updates.
+        '''Update with batch outputs and labels.
 
         Args:
           y: (tensor) model outputs sized [N,].
           t: (tensor) labels targets sized [N,].
-
-        Returns:
-          (tensor): class accuracy.
         '''
         self.y.append(y)
         self.t.append(t)
 
     def _process(self, y, t):
-        ''' Compute TP, FP, FN, TN.
+        '''Compute TP, FP, FN, TN.
 
         Args:
           y: (tensor) model outputs sized [N,].
@@ -44,6 +41,14 @@ class Metrics:
         return tp, fp, fn, tn
 
     def accuracy(self, reduction='mean'):
+        '''Accuracy = (TP+TN) / (P+N).
+
+        Args:
+          reduction: (str) mean or none.
+
+        Returns:
+          (tensor) accuracy.
+        '''
         if not self.y or not self.t:
             return
         assert(reduction in ['none', 'mean'])
@@ -57,6 +62,14 @@ class Metrics:
         return acc
 
     def precision(self, reduction='mean'):
+        '''Precision = TP / (TP+FP).
+
+        Args:
+          reduction: (str) mean or none.
+
+        Returns:
+          (tensor) precision.
+        '''
         if not self.y or not self.t:
             return
         assert(reduction in ['none', 'mean'])
@@ -69,6 +82,14 @@ class Metrics:
         return prec
 
     def recall(self, reduction='mean'):
+        '''Recall = TP / P.
+
+        Args:
+          reduction: (str) mean or none.
+
+        Returns:
+          (tensor) recall.
+        '''
         if not self.y or not self.t:
             return
         assert(reduction in ['none', 'mean'])
