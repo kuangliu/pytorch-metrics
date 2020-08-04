@@ -103,6 +103,15 @@ class Metrics:
             recall = recall.mean()
         return recall
 
+    def confusion_matrix(self):
+        y = torch.cat(self.y, 0)
+        t = torch.cat(self.t, 0)
+        matrix = torch.zeros(self.num_classes, self.num_classes)
+        for i in range(self.num_classes):
+            for j in range(self.num_classes):
+                matrix[j][i] = ((y == i) & (t == j)).sum().item()
+        return matrix
+
 
 def test():
     import pytorch_lightning.metrics.functional as M
@@ -129,6 +138,10 @@ def test():
     print(M.recall(y, t, nc, 'none'))
     print(m.recall('mean'))
     print(M.recall(y, t, nc, 'elementwise_mean'))
+
+    print('\nconfusion matrix:')
+    print(m.confusion_matrix())
+    print(M.confusion_matrix(y, t))
 
 
 if __name__ == '__main__':
