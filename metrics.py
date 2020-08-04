@@ -1,8 +1,8 @@
 import torch
 
 
-class Metrics:
-    '''Metrics computes accuracy/precision/recall/confusion_matrix with batch updates.'''
+class Metric:
+    '''Metric computes accuracy/precision/recall/confusion_matrix with batch updates.'''
 
     def __init__(self, num_classes):
         self.num_classes = num_classes
@@ -116,7 +116,7 @@ class Metrics:
 def test():
     import pytorch_lightning.metrics.functional as M
     nc = 10
-    m = Metrics(num_classes=nc)
+    m = Metric(num_classes=nc)
     y = torch.randint(0, nc, (10,))
     t = torch.randint(0, nc, (10,))
     m.update(y, t)
